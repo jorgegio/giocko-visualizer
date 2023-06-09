@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>giocko-visualizer</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+
+  <body class="bg-teal-100">
+    <div class="flex flex-col">
+      <h1 class="p-2 text-2xl font-mono font-semibold">giocko-visualizer</h1>
+      <div class="grid grid-cols-2 grid-flow-row gap-4 m-2">
+        <div class="bg-teal-500 p-2 rounded-md">
+          <label for="color-input" class="align-middle text-sm">Background color</label>
+          <input type="color" id="color-input"/>
+        </div>
+        <div class="flex flex-col justify-center p-2 bg-cyan-300 rounded-md">
+          <h2 class="mb-2 font-semibold">Preview</h2>
+          <canvas id="canvas" class=""></canvas>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
