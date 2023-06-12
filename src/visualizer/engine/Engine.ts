@@ -51,7 +51,7 @@ export class Engine {
     }
   }
 
-  configUpdated(config: VisualizerConfigState) {
+  configUpdated(config: Readonly<VisualizerConfigState>, _previousState: Readonly<VisualizerConfigState>) {
     this.renderEngine.setClearColor(config.backgroundColor);
   }
 }

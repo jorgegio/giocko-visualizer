@@ -1,52 +1,79 @@
-import { VisualizerConfigState } from "./state";
+import { UIState, VisualizerConfigState, createState } from "./state";
 import { Visualizer } from "./visualizer";
 import { Engine } from "./visualizer";
+import { invoke } from "@tauri-apps/api/tauri";
+import { appWindow } from "@tauri-apps/api/window";
+import { Event as TauriEvent } from "@tauri-apps/api/event";
 
-// DOM Elements
-
-let colorInputEl: HTMLInputElement | null;
-let canvas: HTMLCanvasElement | null;
-
-// State
-
-const state: VisualizerConfigState = new Proxy(
-  {
-    backgroundColor: "#000000",
-  },
-  {
-    set(
-      target: VisualizerConfigState,
-      key: keyof typeof target,
-      value: (typeof target)[typeof key]
-    ) {
-      target[key] = value;
-      engine?.configUpdated(state);
-
-      return true;
-    },
+function uiUpdatedHandler(
+  state: Readonly<UIState>,
+  previousState: Readonly<UIState>
+) {
+  if (previousState.isMidiLoading !== state.isMidiLoading) {
+    console.log("midi loading state changed", state.isMidiLoading);
   }
-);
-
-// Engine
-
-let engine: Engine | null;
+}
 
 window.addEventListener("DOMContentLoaded", () => {
-  // UI
-  colorInputEl = document.querySelector("#color-input");
-  canvas = document.querySelector("#canvas");
+  // Tauri events
+  appWindow.listen(
+    "midi-file-pick-canceled",
+    (event: TauriEvent<{ message: string }>) => {
+      console.log(
+        "Frontend got message that the file pick was canceled",
+        event
+      );
+      uiState.isMidiLoading = false;
+    }
+  );
+
+  appWindow.listen(
+    "midi-file-processed",
+    (event: TauriEvent<{ message: string }>) => {
+      console.log("Frontend got message with processed midi data", event);
+      uiState.isMidiLoading = false;
+    }
+  );
+
+  // DOM Elements
+  let canvas: HTMLCanvasElement | null = document.querySelector("#canvas");
+  let colorInputEl: HTMLInputElement | null =
+    document.querySelector("#color-input");
+
+  // Visualizer Engine
+
+  let engine: Engine = new Engine({
+    canvas: canvas!,
+    experience: Visualizer,
+  });
+
+  // State
+
+  const visualizerState: VisualizerConfigState =
+    createState<VisualizerConfigState>(engine, engine.configUpdated, {
+      backgroundColor: "#000000",
+    });
+
+  const uiState: UIState = createState<UIState>(this, uiUpdatedHandler, {
+    isMidiLoading: false,
+  });
+
+  // const uiState: UIState = createUIState({
+  //   isMidiLoading: false,
+  // });
+
+  // UI Event Listeners
+
+  document.querySelector("#midi-input")?.addEventListener("click", (e) => {
+    e.preventDefault();
+    invoke("load_midi");
+    uiState.isMidiLoading = true;
+  });
 
   colorInputEl?.addEventListener("change", (e) => {
     e.preventDefault();
     if (colorInputEl) {
-      state.backgroundColor = colorInputEl.value;
+      visualizerState.backgroundColor = colorInputEl.value;
     }
   });
-
-  // Visualizer
-  engine = new Engine({
-    canvas: canvas!,
-    experience: Visualizer,
-  });
-  engine.configUpdated(state);
 });
