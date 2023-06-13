@@ -15,26 +15,6 @@ function uiUpdatedHandler(
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  // Tauri events
-  appWindow.listen(
-    "midi-file-pick-canceled",
-    (event: TauriEvent<{ message: string }>) => {
-      console.log(
-        "Frontend got message that the file pick was canceled",
-        event
-      );
-      uiState.isMidiLoading = false;
-    }
-  );
-
-  appWindow.listen(
-    "midi-file-processed",
-    (event: TauriEvent<{ message: string }>) => {
-      console.log("Frontend got message with processed midi data", event);
-      uiState.isMidiLoading = false;
-    }
-  );
-
   // DOM Elements
   let canvas: HTMLCanvasElement | null = document.querySelector("#canvas");
   let colorInputEl: HTMLInputElement | null =
@@ -58,12 +38,7 @@ window.addEventListener("DOMContentLoaded", () => {
     isMidiLoading: false,
   });
 
-  // const uiState: UIState = createUIState({
-  //   isMidiLoading: false,
-  // });
-
   // UI Event Listeners
-
   document.querySelector("#midi-input")?.addEventListener("click", (e) => {
     e.preventDefault();
     invoke("load_midi");
@@ -76,4 +51,24 @@ window.addEventListener("DOMContentLoaded", () => {
       visualizerState.backgroundColor = colorInputEl.value;
     }
   });
+
+  // Tauri events
+  appWindow.listen(
+    "midi-file-pick-canceled",
+    (event: TauriEvent<{ message: string }>) => {
+      console.log(
+        "Frontend got message that the file pick was canceled",
+        event
+      );
+      uiState.isMidiLoading = false;
+    }
+  );
+
+  appWindow.listen(
+    "midi-file-processed",
+    (event: TauriEvent<{ message: string }>) => {
+      console.log("Frontend got message with processed midi data", event);
+      uiState.isMidiLoading = false;
+    }
+  );
 });

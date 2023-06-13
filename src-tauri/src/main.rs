@@ -1,11 +1,10 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::path::Path;
+use std::{path::Path, fs};
 
+use midly::Smf;
 use tauri::{api::dialog, Window};
-
-use std::{thread, time};
 
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
@@ -16,9 +15,11 @@ struct Payload {
 fn process_midi(window: &Window, file_path: &Path) {
     println!("Processing file: {}", file_path.display());
 
-    let five_secs = time::Duration::from_secs(5);
+    // Load bytes into a buffer
+    let bytes = fs::read(file_path).unwrap();
 
-    thread::sleep(five_secs);
+    // Parse bytes in a separate step
+    let smf = Smf::parse(&bytes).unwrap();
 
     println!("Finished processing file: {}", file_path.display());
 
