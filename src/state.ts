@@ -1,5 +1,10 @@
 export type VisualizerConfigState = {
   backgroundColor: string;
+  cameraRotation: {
+    x: number;
+    y: number;
+    z: number;
+  };
 };
 
 export type UIState = {
@@ -10,10 +15,11 @@ type State = VisualizerConfigState | UIState;
 
 export function createState<T extends State>(
   context: unknown,
-  updateHandler: (state: Readonly<T>, previousState: Readonly<T>) => void,
+  updateHandler: (state: Readonly<T>, previousState?: Readonly<T>) => void,
   defaultValue: T
 ): T {
   const target: T = structuredClone(defaultValue);
+  updateHandler.call(context, target);
 
   return new Proxy(target, {
     set(target, key, value) {

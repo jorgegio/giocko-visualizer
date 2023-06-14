@@ -5,6 +5,7 @@ import { Sizes } from "./Sizes";
 import { Camera } from "./Camera";
 import { Experience, ExperienceConstructor } from "./Experience";
 import { VisualizerConfigState } from "../../state";
+import { didValueChange } from "../../utils";
 
 export class Engine {
   public readonly camera!: Camera;
@@ -51,7 +52,17 @@ export class Engine {
     }
   }
 
-  configUpdated(config: Readonly<VisualizerConfigState>, _previousState: Readonly<VisualizerConfigState>) {
-    this.renderEngine.setClearColor(config.backgroundColor);
+  configUpdated(
+    config: Readonly<VisualizerConfigState>,
+    previousState?: Readonly<VisualizerConfigState>
+  ) {
+    if (didValueChange(config, previousState, "backgroundColor")) {
+      this.renderEngine.setClearColor(config.backgroundColor);
+    }
+
+    if (didValueChange(config, previousState, "cameraRotation")) {
+      const { x, y, z } = config.cameraRotation;
+      this.camera.setRotation(x, y, z);
+    }
   }
 }

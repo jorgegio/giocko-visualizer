@@ -1,24 +1,14 @@
 import { UIState, VisualizerConfigState, createState } from "./state";
 import { Visualizer } from "./visualizer";
 import { Engine } from "./visualizer";
-import { invoke } from "@tauri-apps/api/tauri";
 import { appWindow } from "@tauri-apps/api/window";
 import { Event as TauriEvent } from "@tauri-apps/api/event";
-
-function uiUpdatedHandler(
-  state: Readonly<UIState>,
-  previousState: Readonly<UIState>
-) {
-  if (previousState.isMidiLoading !== state.isMidiLoading) {
-    console.log("midi loading state changed", state.isMidiLoading);
-  }
-}
+import { getVisualizerConfigFromUI, uiUpdatedHandler } from "./ui/UI";
+import { setupUIEvents } from "./ui/events";
 
 window.addEventListener("DOMContentLoaded", () => {
   // DOM Elements
   let canvas: HTMLCanvasElement | null = document.querySelector("#canvas");
-  let colorInputEl: HTMLInputElement | null =
-    document.querySelector("#color-input");
 
   // Visualizer Engine
 
@@ -30,27 +20,18 @@ window.addEventListener("DOMContentLoaded", () => {
   // State
 
   const visualizerState: VisualizerConfigState =
-    createState<VisualizerConfigState>(engine, engine.configUpdated, {
-      backgroundColor: "#000000",
-    });
+    createState<VisualizerConfigState>(
+      engine,
+      engine.configUpdated,
+      getVisualizerConfigFromUI()
+    );
 
   const uiState: UIState = createState<UIState>(this, uiUpdatedHandler, {
     isMidiLoading: false,
   });
 
-  // UI Event Listeners
-  document.querySelector("#midi-input")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    invoke("load_midi");
-    uiState.isMidiLoading = true;
-  });
-
-  colorInputEl?.addEventListener("change", (e) => {
-    e.preventDefault();
-    if (colorInputEl) {
-      visualizerState.backgroundColor = colorInputEl.value;
-    }
-  });
+  // UI Events
+  setupUIEvents(visualizerState, uiState);
 
   // Tauri events
   appWindow.listen(
