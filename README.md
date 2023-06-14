@@ -6,10 +6,10 @@ Small music visualizer
 - [x] Tauri setup
 - [x] Threejs setup
 - [x] Basic scene display option can be changed
-- [ ] Open MIDI file
-- [ ] Process MIDI file
-    - [ ] Get tempo
-    - [ ] Get instrument layers list
+- [x] Open MIDI file
+- [x] Process MIDI file
+    - [x] Get tempo
+    - [x] Get instrument layers list
     - [ ] Display MIDI notes
 - [ ] Scene playback synced with MIDI
 - [ ] Open audio file (mp3, WAV, etc.)
