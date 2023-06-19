@@ -1,36 +1,14 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::{path::Path, fs};
-
-use midly::Smf;
 use tauri::{api::dialog, Window};
+mod midi;
+use midi::process_midi;
 
 // the payload type must implement `Serialize` and `Clone`.
 #[derive(Clone, serde::Serialize)]
 struct Payload {
     message: String,
-}
-
-fn process_midi(window: &Window, file_path: &Path) {
-    println!("Processing file: {}", file_path.display());
-
-    // Load bytes into a buffer
-    let bytes = fs::read(file_path).unwrap();
-
-    // Parse bytes in a separate step
-    let smf = Smf::parse(&bytes).unwrap();
-
-    println!("Finished processing file: {}", file_path.display());
-
-    window
-        .emit(
-            "midi-file-processed",
-            Payload {
-                message: "Imagine there's some midi data here".into(),
-            },
-        )
-        .unwrap()
 }
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command

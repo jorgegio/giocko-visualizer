@@ -36,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Tauri events
   appWindow.listen(
     "midi-file-pick-canceled",
-    (event: TauriEvent<{ message: string }>) => {
+    (event: TauriEvent<unknown>) => {
       console.log(
         "Frontend got message that the file pick was canceled",
         event
@@ -47,7 +47,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   appWindow.listen(
     "midi-file-processed",
-    (event: TauriEvent<{ message: string }>) => {
+    (event: TauriEvent<unknown>) => {
       console.log("Frontend got message with processed midi data", event);
       uiState.isMidiLoading = false;
     }
