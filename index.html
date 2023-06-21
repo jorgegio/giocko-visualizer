@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/src/index.css" />
-    <link rel="stylesheet" href="/src/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>giocko-visualizer</title>
     <script type="module" src="/src/main.ts" defer></script>
@@ -12,8 +11,15 @@
   <body class="bg-teal-100">
     <div class="flex flex-col">
       <h1 class="p-2 text-2xl font-mono font-semibold">giocko-visualizer</h1>
+      <!-- MIDI Input -->
       <div class="bg-blue-400 m-2 p-2 rounded-md">
-        <button id="midi-input" id="midi-input" class="px-4 py-2 bg-purple-500 hover:bg-purple-400 rounded-md">Import MIDI</button>
+        <label for="midi-input" class="block mb-2 text-sm font-medium text-gray-900">Import MIDI</label>
+        <input
+          id="midi-input"
+          type="file"
+          accept=".mid"
+          class="block w-full text-sm border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-gray-700 border-gray-600 placeholder-gray-400"
+        />
       </div>
       <div class="grid grid-cols-2 grid-flow-row gap-4 m-2">
         <!-- Configs -->

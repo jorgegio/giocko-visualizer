@@ -1,5 +1,5 @@
-import { UIState, VisualizerConfigState } from "../state";
-import { didValueChange } from "../utils";
+import { UIState, VisualizerConfigState } from "../utils/state";
+import { didValueChange } from "../utils/utils";
 
 export function uiUpdatedHandler(
   state: Readonly<UIState>,
@@ -20,6 +20,10 @@ export function getVisualizerConfigFromUI(): VisualizerConfigState {
       x: 0,
       y: 0,
       z: 0,
+    },
+    midi: {
+      header: { formatType: 0, ticksPerBeat: 0, trackCount: 0 },
+      tracks: [],
     },
   };
 }

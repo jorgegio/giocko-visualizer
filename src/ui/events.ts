@@ -1,5 +1,5 @@
-import { invoke } from "@tauri-apps/api/tauri";
-import { UIState, VisualizerConfigState } from "../state";
+import { UIState, VisualizerConfigState } from "../utils/state";
+import { read } from "midifile-ts";
 
 // Adds event listeners to UI elements
 export function setupUIEvents(
@@ -7,10 +7,28 @@ export function setupUIEvents(
   uiState: UIState
 ) {
   // Load MIDI
-  document.querySelector("#midi-input")?.addEventListener("click", (e) => {
+  document.querySelector("#midi-input")?.addEventListener("change", (e) => {
     e.preventDefault();
-    invoke("load_midi");
+    console.log("loading midi");
     uiState.isMidiLoading = true;
+    const fileList = (e.target as HTMLInputElement).files;
+
+    if (fileList?.length) {
+      const file = fileList[0];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        if (e.target == null) {
+          return;
+        }
+        const buf = e.target.result as ArrayBuffer;
+        const midi = read(buf);
+        console.log("midi", midi);
+        visualizerState.midi = midi;
+        uiState.isMidiLoading = false;
+      };
+      reader.readAsArrayBuffer(file);
+    }
   });
 
   // Background Color

@@ -1,3 +1,5 @@
+import { MidiFile } from "midifile-ts";
+
 export type VisualizerConfigState = {
   backgroundColor: string;
   cameraRotation: {
@@ -5,6 +7,7 @@ export type VisualizerConfigState = {
     y: number;
     z: number;
   };
+  midi: MidiFile;
 };
 
 export type UIState = {

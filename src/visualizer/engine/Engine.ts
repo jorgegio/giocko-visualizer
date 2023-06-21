@@ -4,8 +4,8 @@ import { RenderLoop } from "./RenderLoop";
 import { Sizes } from "./Sizes";
 import { Camera } from "./Camera";
 import { Experience, ExperienceConstructor } from "./Experience";
-import { VisualizerConfigState } from "../../state";
-import { didValueChange } from "../../utils";
+import { VisualizerConfigState } from "../../utils/state";
+import { didValueChange } from "../../utils/utils";
 
 export class Engine {
   public readonly camera!: Camera;
