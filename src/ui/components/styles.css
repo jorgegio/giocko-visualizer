@@ -1,0 +1,7 @@
+/* VisualizerControlBlock */
+
+visualizer-control-block {
+    background: theme('colors.teal.500');
+    padding: theme(padding.2);
+    border-radius: theme(borderRadius.md);
+}

@@ -1,16 +1,13 @@
-import { UIState, VisualizerConfigState } from "../utils/state";
+import { store } from "../store/state";
 import { read } from "midifile-ts";
 
 // Adds event listeners to UI elements
-export function setupUIEvents(
-  visualizerState: VisualizerConfigState,
-  uiState: UIState
-) {
+export function setupUIEvents() {
+  const state = store.state;
   // Load MIDI
   document.querySelector("#midi-input")?.addEventListener("change", (e) => {
     e.preventDefault();
     console.log("loading midi");
-    uiState.isMidiLoading = true;
     const fileList = (e.target as HTMLInputElement).files;
 
     if (fileList?.length) {
@@ -21,12 +18,17 @@ export function setupUIEvents(
         if (e.target == null) {
           return;
         }
-        const buf = e.target.result as ArrayBuffer;
-        const midi = read(buf);
-        console.log("midi", midi);
-        visualizerState.midi = midi;
-        uiState.isMidiLoading = false;
+
+        try {
+          const buf = e.target.result as ArrayBuffer;
+          const midi = read(buf);
+          console.log("midi", midi);
+          state.midi = midi;
+        } catch {
+          console.log("Failed to read file");
+        }
       };
+
       reader.readAsArrayBuffer(file);
     }
   });
@@ -38,7 +40,7 @@ export function setupUIEvents(
 
   colorInputEl?.addEventListener("change", (e) => {
     e.preventDefault();
-    visualizerState.backgroundColor = colorInputEl.value;
+    state.backgroundColor = colorInputEl.value;
   });
 
   // Camera Rotation
@@ -50,8 +52,8 @@ export function setupUIEvents(
 
   cameraRotationXEl?.addEventListener("change", (e) => {
     e.preventDefault();
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
+    state.cameraRotation = {
+      ...state.cameraRotation,
       x: parseFloat(cameraRotationXEl.value),
     };
 
@@ -64,8 +66,8 @@ export function setupUIEvents(
   cameraRotationXEl?.addEventListener("dblclick", (e) => {
     e.preventDefault();
     cameraRotationXEl.value = "0";
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
+    state.cameraRotation = {
+      ...state.cameraRotation,
       x: 0,
     };
 
@@ -81,8 +83,8 @@ export function setupUIEvents(
 
   cameraRotationYEl?.addEventListener("change", (e) => {
     e.preventDefault();
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
+    state.cameraRotation = {
+      ...state.cameraRotation,
       y: parseFloat(cameraRotationYEl.value),
     };
 
@@ -95,43 +97,13 @@ export function setupUIEvents(
   cameraRotationYEl?.addEventListener("dblclick", (e) => {
     e.preventDefault();
     cameraRotationYEl.value = "0";
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
+    state.cameraRotation = {
+      ...state.cameraRotation,
       y: 0,
     };
 
     if (cameraRotationYValueEl) {
       cameraRotationYValueEl.textContent = "0";
-    }
-  });
-
-  const cameraRotationZEl: HTMLInputElement | null =
-    document.querySelector("#camera-rotation-z");
-  const cameraRotationZValueEl: HTMLInputElement | null =
-    document.querySelector("#camera-rotation-z-value");
-
-  cameraRotationZEl?.addEventListener("change", (e) => {
-    e.preventDefault();
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
-      z: parseFloat(cameraRotationZEl.value),
-    };
-
-    if (cameraRotationZValueEl) {
-      cameraRotationZValueEl.textContent = cameraRotationZEl.value;
-    }
-  });
-
-  cameraRotationZEl?.addEventListener("dblclick", (e) => {
-    e.preventDefault();
-    cameraRotationZEl.value = "0";
-    visualizerState.cameraRotation = {
-      ...visualizerState.cameraRotation,
-      z: 0,
-    };
-
-    if (cameraRotationZValueEl) {
-      cameraRotationZValueEl.textContent = "0";
     }
   });
 }

@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="/src/index.css" />
+    <link rel="stylesheet" href="/src/ui/components/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>giocko-visualizer</title>
     <script type="module" src="/src/main.ts" defer></script>
+    <script type="module" src="/src/ui/components/index.ts" defer></script>
   </head>
 
   <body class="bg-teal-100">
@@ -17,35 +19,34 @@
         <input
           id="midi-input"
           type="file"
-          accept=".mid"
+          accept="image/jpeg"
           class="block w-full text-sm border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-gray-700 border-gray-600 placeholder-gray-400"
         />
       </div>
       <div class="grid grid-cols-2 grid-flow-row gap-4 m-2">
         <!-- Configs -->
+        <visualizer-control-block>
+          <span slot="title">Tracks</span>
+          <div slot="content" id="tracks-container" class="flex flex-col"></div>
+        </visualizer-control-block>
         <div class="bg-teal-500 p-2 rounded-md">
           <div>
             <label for="color-input" class="text-sm">Background color</label>
             <input type="color" id="color-input" value="#b18cfe" />
           </div>
-          <div id="camera-rotation-controls">
+          <!-- <div id="camera-rotation-controls">
             <h2>Camera</h2>
             <div>
               <label for="color-input" class="text-sm pr-2">Rotation x</label>
-              <input type="range" min="-1.5" max="1.5" step="0.1" id="camera-rotation-x" value="0" />
+              <input type="range" min="-1" max="1" step="0.1" id="camera-rotation-x" value="0" />
               <p id="camera-rotation-x-value">0</p>
             </div>
             <div>
               <label for="color-input" class="text-sm pr-2">Rotation y</label>
-              <input type="range" min="-1.5" max="1.5" step="0.1" id="camera-rotation-y" value="0" />
+              <input type="range" min="-1" max="1" step="0.1" id="camera-rotation-y" value="0" />
               <p id="camera-rotation-y-value">0</p>
             </div>
-            <div>
-              <label for="color-input" class="text-sm pr-2">Rotation z</label>
-              <input type="range" min="-1.5" max="1.5" step="0.1" id="camera-rotation-z" value="0" />
-              <p id="camera-rotation-z-value">0</p>
-            </div>
-          </div>
+          </div> -->
         </div>
         <!-- Preview -->
         <div class="flex flex-col justify-center p-2 bg-cyan-300 rounded-md">

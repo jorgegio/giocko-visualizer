@@ -1,29 +1,28 @@
-import { UIState, VisualizerConfigState } from "../utils/state";
-import { didValueChange } from "../utils/utils";
+import { State, store } from "../store/state";
+import { didValueChange } from "../store/utils";
 
-export function uiUpdatedHandler(
-  state: Readonly<UIState>,
-  previousState?: Readonly<UIState>
+function uiUpdatedHandler(
+  state: Readonly<State>,
+  previousState?: Readonly<State>
 ) {
   if (didValueChange(state, previousState, "isMidiLoading")) {
     console.log("midi loading state changed", state.isMidiLoading);
   }
+  if (didValueChange(state, previousState, "midi") && state.midi) {
+    generateTracks();
+  }
 }
 
-export function getVisualizerConfigFromUI(): VisualizerConfigState {
-  const colorInputEl: HTMLInputElement | null =
-    document.querySelector("#color-input");
+store.subscribe(uiUpdatedHandler);
 
-  return {
-    backgroundColor: colorInputEl?.value ?? "#000000",
-    cameraRotation: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-    midi: {
-      header: { formatType: 0, ticksPerBeat: 0, trackCount: 0 },
-      tracks: [],
-    },
-  };
+function generateTracks() {
+  const { midi } = store.state;
+
+  const tracksContainer = document.querySelector("#tracks-container")!;
+
+  for (let track = 0; track < midi.tracks.length; track++) {
+    const node = document.createElement("track-config");
+    node.innerHTML = `track ${track}`;
+    tracksContainer.appendChild(node);
+  }
 }

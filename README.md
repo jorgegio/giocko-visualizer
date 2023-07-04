@@ -12,6 +12,7 @@ Small music visualizer
     - [x] Get instrument layers list
     - [ ] Display MIDI notes
 - [ ] Extend display options
+    - [ ] Background color/image
     - [ ] Style tracks
         - [ ] Toggle between drum and regular notation (note triggers vs held notes)
         - [ ] Track colors

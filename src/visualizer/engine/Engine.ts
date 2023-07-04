@@ -4,8 +4,8 @@ import { RenderLoop } from "./RenderLoop";
 import { Sizes } from "./Sizes";
 import { Camera } from "./Camera";
 import { Experience, ExperienceConstructor } from "./Experience";
-import { VisualizerConfigState } from "../../utils/state";
-import { didValueChange } from "../../utils/utils";
+import { State, store } from "../../store/state";
+import { didValueChange } from "../../store/utils";
 
 export class Engine {
   public readonly camera!: Camera;
@@ -36,6 +36,12 @@ export class Engine {
     this.experience = new experience(this);
 
     this.experience.init();
+
+    // Subscribe to changes in state
+    store.subscribe((state: Readonly<State>, previousState?: Readonly<State>) =>
+      this.configUpdated(state, previousState)
+    );
+    this.configUpdated(store.state);
   }
 
   update(delta: number) {
@@ -52,17 +58,14 @@ export class Engine {
     }
   }
 
-  configUpdated(
-    config: Readonly<VisualizerConfigState>,
-    previousState?: Readonly<VisualizerConfigState>
-  ) {
+  configUpdated(config: Readonly<State>, previousState?: Readonly<State>) {
     if (didValueChange(config, previousState, "backgroundColor")) {
       this.renderEngine.setClearColor(config.backgroundColor);
     }
 
     if (didValueChange(config, previousState, "cameraRotation")) {
-      const { x, y, z } = config.cameraRotation;
-      this.camera.setRotation(x, y, z);
+      const { x, y } = config.cameraRotation;
+      this.camera.setRotation(x, y, 0);
     }
   }
 }
