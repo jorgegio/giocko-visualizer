@@ -37,8 +37,9 @@ export class Engine {
     this.experience.init();
 
     // Subscribe to changes in state
-    store.subscribe((state: Readonly<State>) =>
-      this.configUpdated(state)
+    store.subscribe(
+      (state: Readonly<State>) => this.configUpdated(state),
+      ["cameraPosition", "cameraRotation", "backgroundColor"]
     );
     this.configUpdated(store.state);
   }

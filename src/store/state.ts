@@ -7,7 +7,6 @@ type TrackConfig = {
 };
 
 export type State = {
-  audioSrc: string;
   backgroundColor: string;
   cameraRotation: {
     x: number;
@@ -29,7 +28,6 @@ function defaultState(): State {
     document.querySelector("#color-input");
 
   return {
-    audioSrc: "",
     backgroundColor: colorInputEl?.value ?? "#000000",
     cameraRotation: {
       x: 0,
@@ -51,9 +49,10 @@ function defaultState(): State {
 
 class Store {
   public state: State;
-  private subscribers: Array<
-    (state: Readonly<State>) => void
-  >;
+  private subscribers: Array<{
+    fn: (state: Readonly<State>) => void;
+    keys: Array<keyof State>;
+  }>;
 
   constructor() {
     this.state = defaultState();
@@ -62,7 +61,11 @@ class Store {
     this.state = new Proxy(defaultState(), {
       set: (state, key, value) => {
         Reflect.set(state, key, value);
-        this.subscribers.forEach((subscriber) => subscriber(state));
+        this.subscribers.forEach(({ fn, keys }) => {
+          if (keys.includes(key as keyof State)) {
+            fn(state);
+          }
+        });
 
         return true;
       },
@@ -70,9 +73,10 @@ class Store {
   }
 
   public subscribe(
-    fn: (state: Readonly<State>, previousState?: Readonly<State>) => void
+    fn: (state: Readonly<State>, previousState?: Readonly<State>) => void,
+    keys: Array<keyof State>
   ): void {
-    this.subscribers.push(fn);
+    this.subscribers.push({ keys, fn });
   }
 }
 

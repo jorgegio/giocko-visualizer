@@ -6,4 +6,4 @@ function uiUpdatedHandler(
   console.log("uiUpdate called", state);
 }
 
-store.subscribe(uiUpdatedHandler);
+store.subscribe(uiUpdatedHandler, ["backgroundColor"]);

@@ -8,6 +8,59 @@ export class Visualizer implements Experience {
   constructor(private engine: Engine) {}
 
   init() {
+    this.setupScene();
+
+    store.subscribe(
+      (state) => {
+        if (state.midi) {
+          // Clean existing notes
+          this.setupScene();
+
+          for (let index = 0; index < state.midi.tracks.length; index++) {
+            let displacementX = 0;
+            for (let event of state.midi.tracks[index]) {
+              displacementX += event.deltaTime / 1000;
+
+              if (event.type === "channel" && event.subtype === "noteOn") {
+                const displacementY = event.noteNumber / 5;
+                const note = new Box(state.midi.tracksConfig[index].color);
+                note.castShadow = true;
+
+                note.position.set(
+                  displacementX,
+                  displacementY - 10,
+                  -state.midi.tracksConfig[index].depth * 3
+                );
+
+                state.midi.renderedNotes[index].push(note);
+                // console.log(`adding note at ${displacementX}, ${displacementY}`);
+              }
+            }
+            if (state.midi.renderedNotes[index].length) {
+              this.engine.scene.add(...state.midi.renderedNotes[index]);
+            }
+          }
+        }
+      },
+      ["midi"]
+    );
+  }
+
+  resize() {}
+
+  update() {
+    const audio: HTMLAudioElement | null = document.querySelector("#audio");
+
+    if (audio) {
+      const { state } = store;
+
+      state.cameraPosition = { ...state.cameraPosition, x: audio.currentTime };
+    }
+  }
+
+  setupScene() {
+    this.engine.scene.remove(...this.engine.scene.children);
+
     const plane = new THREE.Mesh(
       new THREE.PlaneGeometry(10, 10),
       new THREE.MeshStandardMaterial({ color: 0xffffff })
@@ -19,46 +72,10 @@ export class Visualizer implements Experience {
     // this.engine.scene.add(plane);
     this.engine.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
-    let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
     directionalLight.castShadow = true;
     directionalLight.position.set(2, 2, 2);
 
     this.engine.scene.add(directionalLight);
-
-    store.subscribe((state) => {
-      if (state.midi) {
-        // Clean existing notes
-        this.engine.scene.remove(...this.engine.scene.children);
-
-        for (let index = 0; index < state.midi.tracks.length; index++) {
-          let displacementX = 0;
-          for (let event of state.midi.tracks[index]) {
-            displacementX += event.deltaTime / 1000;
-
-            if (event.type === "channel" && event.subtype === "noteOn") {
-              const displacementY = event.noteNumber / 5;
-              const note = new Box(state.midi.tracksConfig[index].color);
-              note.castShadow = false;
-
-              note.position.set(
-                displacementX,
-                displacementY - 10,
-                -state.midi.tracksConfig[index].depth * 3
-              );
-
-              state.midi.renderedNotes[index].push(note);
-              // console.log(`adding note at ${displacementX}, ${displacementY}`);
-            }
-          }
-          if (state.midi.renderedNotes[index].length) {
-            this.engine.scene.add(...state.midi.renderedNotes[index]);
-          }
-        }
-      }
-    });
   }
-
-  resize() {}
-
-  update() {}
 }
