@@ -15,12 +15,18 @@
       "dialog": {
         "open": true,
         "save": true
+      },
+      "fs": {
+        "readFile": true
+      },
+      "protocol": {
+        "asset": true
       }
     },
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.giocko-visualizer.dev",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",

@@ -1,10 +1,10 @@
 import { Engine } from "../engine/Engine";
 import * as THREE from "three";
-import { Box } from "./elements/Box";
 import { Experience } from "../engine/Experience";
+import { store } from "../../store/state";
+import { Box } from "./elements/Box";
 
 export class Visualizer implements Experience {
-
   constructor(private engine: Engine) {}
 
   init() {
@@ -16,7 +16,7 @@ export class Visualizer implements Experience {
     plane.rotation.x = -Math.PI / 2;
     plane.receiveShadow = true;
 
-    this.engine.scene.add(plane);
+    // this.engine.scene.add(plane);
     this.engine.scene.add(new THREE.AmbientLight(0xffffff, 0.5));
 
     let directionalLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -25,12 +25,37 @@ export class Visualizer implements Experience {
 
     this.engine.scene.add(directionalLight);
 
-    const box = new Box();
-    box.castShadow = true;
-    box.rotation.y = Math.PI / 4;
-    box.position.set(0, 0.5, 0);
+    store.subscribe((state) => {
+      if (state.midi) {
+        // Clean existing notes
+        this.engine.scene.remove(...this.engine.scene.children);
 
-    this.engine.scene.add(box);
+        for (let index = 0; index < state.midi.tracks.length; index++) {
+          let displacementX = 0;
+          for (let event of state.midi.tracks[index]) {
+            displacementX += event.deltaTime / 1000;
+
+            if (event.type === "channel" && event.subtype === "noteOn") {
+              const displacementY = event.noteNumber / 5;
+              const note = new Box(state.midi.tracksConfig[index].color);
+              note.castShadow = false;
+
+              note.position.set(
+                displacementX,
+                displacementY - 10,
+                -state.midi.tracksConfig[index].depth * 3
+              );
+
+              state.midi.renderedNotes[index].push(note);
+              // console.log(`adding note at ${displacementX}, ${displacementY}`);
+            }
+          }
+          if (state.midi.renderedNotes[index].length) {
+            this.engine.scene.add(...state.midi.renderedNotes[index]);
+          }
+        }
+      }
+    });
   }
 
   resize() {}

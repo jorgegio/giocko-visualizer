@@ -5,7 +5,6 @@ import { Sizes } from "./Sizes";
 import { Camera } from "./Camera";
 import { Experience, ExperienceConstructor } from "./Experience";
 import { State, store } from "../../store/state";
-import { didValueChange } from "../../store/utils";
 
 export class Engine {
   public readonly camera!: Camera;
@@ -38,8 +37,8 @@ export class Engine {
     this.experience.init();
 
     // Subscribe to changes in state
-    store.subscribe((state: Readonly<State>, previousState?: Readonly<State>) =>
-      this.configUpdated(state, previousState)
+    store.subscribe((state: Readonly<State>) =>
+      this.configUpdated(state)
     );
     this.configUpdated(store.state);
   }
@@ -58,14 +57,15 @@ export class Engine {
     }
   }
 
-  configUpdated(config: Readonly<State>, previousState?: Readonly<State>) {
-    if (didValueChange(config, previousState, "backgroundColor")) {
-      this.renderEngine.setClearColor(config.backgroundColor);
-    }
-
-    if (didValueChange(config, previousState, "cameraRotation")) {
+  configUpdated(config: Readonly<State>) {
+    this.renderEngine.setClearColor(config.backgroundColor);
+    {
       const { x, y } = config.cameraRotation;
       this.camera.setRotation(x, y, 0);
+    }
+    {
+      const { x, y, z } = config.cameraPosition;
+      this.camera.setPosition(x, y, z);
     }
   }
 }

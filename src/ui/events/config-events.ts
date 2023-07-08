@@ -1,37 +1,8 @@
-import { store } from "../store/state";
-import { read } from "midifile-ts";
+import { store } from "../../store/state";
 
-// Adds event listeners to UI elements
-export function setupUIEvents() {
+// Adds event listeners to visualizer config elements
+export function setupConfigUIEvents() {
   const state = store.state;
-  // Load MIDI
-  document.querySelector("#midi-input")?.addEventListener("change", (e) => {
-    e.preventDefault();
-    console.log("loading midi");
-    const fileList = (e.target as HTMLInputElement).files;
-
-    if (fileList?.length) {
-      const file = fileList[0];
-      const reader = new FileReader();
-
-      reader.onload = (e) => {
-        if (e.target == null) {
-          return;
-        }
-
-        try {
-          const buf = e.target.result as ArrayBuffer;
-          const midi = read(buf);
-          console.log("midi", midi);
-          state.midi = midi;
-        } catch {
-          console.log("Failed to read file");
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
-    }
-  });
 
   // Background Color
 

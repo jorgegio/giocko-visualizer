@@ -16,7 +16,7 @@ export class Camera implements Entity {
       0.1,
       1000
     );
-    this.instance.position.z = 5;
+    this.instance.position.z = 10;
     this.instance.position.y = 2;
     this.engine.scene.add(this.instance);
   }
@@ -31,5 +31,9 @@ export class Camera implements Entity {
   setRotation(x: number, y: number, z: number) {
     // TODO: Rotate around focus point
     this.instance.rotation.set(x, y, z);
+  }
+
+  setPosition(x: number, y: number, z: number) {
+    this.instance.position.set(x, y, z);
   }
 }

@@ -10,7 +10,7 @@ Small music visualizer
 - [x] Process MIDI file
     - [x] Get tempo
     - [x] Get instrument layers list
-    - [ ] Display MIDI notes
+    - [x] Display MIDI notes
 - [ ] Extend display options
     - [ ] Background color/image
     - [ ] Style tracks
@@ -28,7 +28,7 @@ Small music visualizer
     - [ ] Color themes/palettes
     - [ ] Save/load themes
 - [ ] Scene playback synced with MIDI
-- [ ] Open audio file (mp3, WAV, etc.)
+- [x] Open audio file (mp3, WAV, etc.)
 - [ ] Generate visuals that react to audio file
 - [ ] Toggle MIDI and audio visuals
 - [ ] Save/load display options

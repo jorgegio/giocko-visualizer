@@ -1,15 +1,10 @@
 (() => {
   const template = document.createElement("template");
   template.innerHTML = `
-  <details>
-      <summary>
-          <slot name="title"></slot>
-      </summary>
-      <slot name="content"></slot>
-  </details>
+    <div></div>
   `;
 
-  class VisualizerControlBlock extends HTMLElement {
+  class TracksContainer extends HTMLElement {
     constructor() {
       super();
     }
@@ -20,5 +15,5 @@
     }
   }
 
-  customElements.define("visualizer-control-block", VisualizerControlBlock);
+  customElements.define("tracks-container", TracksContainer);
 })();
